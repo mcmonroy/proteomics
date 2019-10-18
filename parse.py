@@ -1,5 +1,5 @@
 import sys
-fastaFile = open(sys.argv[1], "r")
+fastaFile = open("../proteins/"+sys.argv[1], "r")
 org = (sys.argv[1].split(".")[0])
 
 
