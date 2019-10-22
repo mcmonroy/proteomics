@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Author: ZKA Malabuyoc
-# Created: 23 July 2015
-
 # NOTE: Fix file permissions for this file by typing:
 #		   cd <path>
 #          sudo chmod 755 compare.scr
@@ -11,8 +8,6 @@
 
 sudo chmod 755 preprocessing.scr
 
-mkdir RBH || exit 1
-
 for file in `ls *.fasta`
 
 do
@@ -20,128 +15,17 @@ TYPE=`echo $file | sed -e "s/\.fasta//g"` # extract filename without the file ex
 
 mkdir $TYPE || exit 1
 
+
+python3 parse.py $TYPE.fasta
+
 cd $TYPE
-mkdir DM
-mkdir GC
-mkdir GDB
-
-cd GDB
-mkdir FAA
-mkdir PEP
-mkdir PRT
 mkdir BLASTDB
+cd BLASTDB
 
-cd ../.. #go back to root directory where perl scripts are located
-
-perl split.pl $TYPE.fasta
-
-for f in `find . -maxdepth 1 -name "*.faa"`;
-do
-
-mv "$f" $TYPE/GDB/FAA;
-if [ $? -eq 0 ]; then	# prompt if execution is successful
-echo "\n Successfully moved $f to $TYPE/GDB/FAA."
-fi
-
-done
-
-cp replaceid.pl $TYPE/GDB/FAA
-cp metadata.pl $TYPE/GDB/FAA
-
-cd $TYPE/GDB/FAA
-
-for fn in `find . -maxdepth 1 -name "*.faa"`;  # foreach file in all .faa files
-do
-
-NC=`echo $fn | sed -e "s/\.faa//g"` # extract filename without the file extension
-
-perl replaceid.pl $NC.faa $NC
-perl metadata.pl $NC.faa
-
-done
-
-rm replaceid.pl	
-
-for p in `find . -maxdepth 1 -name "*.prt"`;
-do
-
-mv "$p" ../PRT;
-if [ $? -eq 0 ]; then	# prompt if execution is successful
-echo "\n Successfully moved $p to $TYPE/GDB/PRT."
-fi
-
-done
-
-cd ../../.. #go back to root directory
-
-
->$TYPE.txt
-
-find ./$TYPE/GDB/PRT -type f -name "*.prt" -print0 | sort -z | xargs -0 cat -- >> $TYPE.txt
-find . -type f -name "$TYPE.txt" -print0 | sort -z | xargs -0 cat -- >> $TYPE.pep
-
-rm $TYPE.txt
-
-mv $TYPE.pep $TYPE/GDB/PEP
-
-if [ $? -eq 0 ]; then	# prompt if execution is successful
-echo "\nSuccessfully created $TYPE.pep in $TYPE/GDB/PEP."
-fi
-
-cd $TYPE/GDB/BLASTDB
-makeblastdb -in ../PEP/$TYPE.pep -title $TYPE -dbtype prot -out $TYPE -parse_seqids
+makeblastdb -in ../$TYPE.pep -title $TYPE -dbtype prot -out $TYPE -parse_seqids
 
 if [ $? -eq 0 ]; then	# prompt if execution is successful
 echo "\nSuccessfully created $TYPE blastdb in $TYPE/GDB/BLASTDB."
 fi
-
-cd ../../.. #go back to root directory
-
-echo "\n ===================================================================== \n";
-
-echo "Finished preprocessing of data for $TYPE."
-
-echo "Total number of protein sequences for $TYPE: "
-grep -o '>' $TYPE.fasta | wc -l
-cd $TYPE/GDB/FAA
-
-echo "Total number of .faa files created in $TYPE/GDB/FAA: "
-ls | grep '\.faa$' | wc -l
-cd ../PRT
-
-echo "Total number of .prt files created in $TYPE/GDB/PRT: "
-ls | grep '\.prt$'| wc -l
-echo "\n";
-cd ../PEP
-
-echo "$TYPE.pep file containing PID and sequences created in $TYPE/GDB/PEP."
-echo "$TYPE.ident file containing PID of all sequences created in $TYPE/GDB."
-
-echo "\n ===================================================================== \n";
-
-cd ../../.. #go back to root directory
-
-cd $TYPE/GDB/PEP
-
-grep ">" $TYPE.pep | sed -e "s/>//g" > $TYPE.ident
-
-mv $TYPE.ident ../
-
-cd ../../.. #go back to root directory
-
-rm $TYPE/GDB/FAA/metadata.pl
-
-CWD=`pwd`
-
-perl createsql.pl $TYPE $CWD
-if [ $? -eq 0 ]; then	# prompt if execution is successful
-echo "\nSuccessfully created $TYPE.sql in $CWD."
-fi
-
-cat $TYPE.sql >> import.sql
-
-if [ $? -eq 0 ]; then	# prompt if execution is successful
-echo "\nSuccessfully created import.sql."
-fi
-
+cd ../../
 done
