@@ -1,3 +1,5 @@
+-- manual pa ang pagcreate ng db sa sql
+
 -- CREATE DATABASE IF NOT EXISTS proteomics;
 
 
