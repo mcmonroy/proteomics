@@ -1,14 +1,17 @@
 import sys
 
 fastaFile = open(sys.argv[1], "r")
-parsed = open("THAPSdb.txt", "+w")
+org = sys.argv[1].split(".")[0]
+parsed = open(org+".txt", "+w")
 
 seq = fastaFile.read().split("\n\n") #indiv sequences with header
-for i in range (0, len(seq)): #iterate on each sequences
+for i in range (0, len(seq)-1): #iterate on each sequences
 	header = seq[i].split("\n")[0]
-
-	parsed.write('|'.join((header.split("|"))[3:]) + "|") #remove identifier, starts with ID in writing
-	parsed.write(''.join(seq[i].split("\n")[1:]) + "|\n")
+	header = header.split("|")
+	
+	parsed.write(header[3] + "|" + header[1] + "|" + str(header[4:]) + "|") #remove identifier, starts with ID in writing
+	# parsed.write('|'.join((header.split("|"))[3:]) + "|") #remove identifier, starts with ID in writing
+	# parsed.write(''.join(seq[i].split("\n")[1:]) + "|\n")
 
 fastaFile.close()
 parsed.close()
