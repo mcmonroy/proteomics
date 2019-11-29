@@ -1,36 +1,16 @@
 -- CREATE DATABASE IF NOT EXISTS proteomics;
 
 
-CREATE TABLE IF NOT EXISTS proteins (
+CREATE TABLE IF NOT EXISTS PROTEINS (
 	seq_id varchar(50) NOT NULL PRIMARY KEY,
 	genbank_id TEXT(50) NOT NULL,
 	protein_name TEXT(200) NOT NULL,
 	sequence TEXT(500) NOT NULL,
-	type TEXT(20) NOT NULL
+	type TEXT(20) NOT NULL,
+	rbh TEXT(50) NOT NULL
 	-- no_seq_chars INTEGER
 );
 
--- -- LOAD DATA LOCAL INFILE './PHATRdb.txt' INTO TABLE PHATR
--- -- FIELDS TERMINATED BY '|'
--- -- LINES TERMINATED BY '\n';
-
--- CREATE TABLE IF NOT EXISTS THAOC (
--- 	seq_id TEXT NOT NULL,
--- 	protein_name TEXT NOT NULL,
--- 	sequence TEXT NOT NULL
--- 	-- no_seq_chars INTEGER
--- );
-
--- -- LOAD DATA LOCAL INFILE './THAOCdb.txt' INTO TABLE THAOC
--- -- FIELDS TERMINATED BY '|'
--- -- LINES TERMINATED BY '\n';
-
--- CREATE TABLE IF NOT EXISTS THAPS (
--- 	seq_id TEXT NOT NULL,
--- 	protein_name TEXT NOT NULL,
--- 	sequence TEXT NOT NULL
--- 	-- no_seq_chars INTEGER
--- );
 
 LOAD DATA LOCAL INFILE './shortTHAPS.txt' INTO TABLE PROTEINS
 FIELDS TERMINATED BY '|'

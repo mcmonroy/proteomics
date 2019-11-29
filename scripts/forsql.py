@@ -10,7 +10,7 @@ for i in range (0, len(seq)-1): #iterate on each sequences
 	header = seq[i].split("\n")[0]
 	header = header.split("|")
 	
-	parsed.write(header[3] + "|" + header[1] + "|" + str(header[4:]) + "|") #remove identifier, starts with ID in writing
+	parsed.write(header[3] + "|" + header[1] + "|" + header[4] + "|") #remove identifier, starts with ID in writing
 	# parsed.write('|'.join((header.split("|"))[3:]) + "|") #remove identifier, starts with ID in writing
 	parsed.write(''.join(seq[i].split("\n")[1:]) + "|" + org + "|\n")
 
